@@ -1,10 +1,13 @@
 import os, sys, multiprocessing, gym, ray, shutil, argparse, importlib, glob
+import torch
+import torch.nn as nn
 import numpy as np
 # from ray.rllib.agents.ppo import PPOTrainer, DEFAULT_CONFIG
 from ray.rllib.agents import ppo, sac
+from ray.rllib.models import ModelCatalog
+from ray.rllib.models.torch.torch_modelv2 import TorchModelV2
 from ray.tune.logger import pretty_print
 from numpngw import write_apng
-
 
 def setup_config(env, algo, coop=False, seed=0, extra_configs={}):
     num_processes = multiprocessing.cpu_count()
@@ -14,6 +17,7 @@ def setup_config(env, algo, coop=False, seed=0, extra_configs={}):
         config['num_sgd_iter'] = 50
         config['sgd_minibatch_size'] = 128
         config['lambda'] = 0.95
+        config["framework"] = "tf"
         config['model']['fcnet_hiddens'] = [100, 100]
     elif algo == 'sac':
         # NOTE: pip3 install tensorflow_probability

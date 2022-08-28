@@ -11,4 +11,8 @@ from assistive_gym.envs.smplx_testing import SMPLXTestingEnv
 from assistive_gym.envs.view_cloth_vertices import ViewClothVerticesEnv
 
 from assistive_gym.envs.cloth_manip_figures_envs import ClothManipStretchEnv
+from assistive_gym.envs.scratch_itch_plus_envs import ScratchItchPlusJacoEnv
+from assistive_gym.envs.dressing_plus_envs import DressingPlusPR2MeshEnv
+from assistive_gym.envs.bed_bathing_plus_envs import BedBathingPlusJacoEnv
+from assistive_gym.envs.move_to_dot_envs import MoveToDotJacoEnv
 # from assistive_gym.envs.bed_pose_envs import BedPosePR2Env, BedPosePR2MeshEnv, BedPoseStretchEnv, BedPoseStretchMeshEnv

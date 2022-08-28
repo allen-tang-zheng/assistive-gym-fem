@@ -84,3 +84,26 @@ register(
     max_episode_steps=1000000,
 )
 
+register(
+    id='ScratchItchPlus-v0',
+    entry_point='assistive_gym.envs:ScratchItchPlusJacoEnv',
+    max_episode_steps=200,
+)
+
+register(
+    id='DressingPlus-v0',
+    entry_point='assistive_gym.envs:DressingPlusPR2MeshEnv',
+    max_episode_steps=200,
+)
+
+register(
+    id='BedBathingPlus-v0',
+    entry_point='assistive_gym.envs:BedBathingPlusJacoEnv',
+    max_episode_steps=200,
+)
+
+register(
+    id='MoveToDot-v0',
+    entry_point='assistive_gym.envs:MoveToDotJacoEnv',
+    max_episode_steps=200,
+)
