@@ -320,11 +320,11 @@ def setup_config():
 
 def load_policy(mode, policy_path=None):
     agent = ppo.PPOTrainer(setup_config(), 'assistive_gym:MoveToDot-v0')
-    files = [f.split('_')[-1] for f in glob.glob("./trained_models/ppo/"+mode+"/model_*.pt")]
+    files = [f.split('_')[-1] for f in glob.glob("./trained_models/ppobetween8and10/"+mode+"/model_*.pt")]
     files_ints = [int(f[:-3]) for f in files]
     if files:
         checkpoint_max = max(files_ints)
-        checkpoint = torch.load("./trained_models/ppo/"+mode+"/model_"+str(checkpoint_max)+".pt")
+        checkpoint = torch.load("./trained_models/ppobetween8and10/"+mode+"/model_"+str(checkpoint_max)+".pt")
         agent.workers.local_worker().get_policy().model.load_state_dict(checkpoint)
         agent.workers.sync_weights()
     return agent
@@ -405,20 +405,20 @@ ray.init(ignore_reinit_error=True)
 #env.disconnect()
 
 save_dir='./trained_models/'
-render = False
+render = True
 graph = False 
 if(render):
     ModelCatalog.register_custom_model("Model", ConvAppend)
-    render_policy('visual1', 10)
+    render_policy('append1', 10)
 elif(graph):
-    a = []
+    '''a = []
     b = []
     c = []
-    with open("./trained_models/ppopastbetween8and10/visual1/reward_mean.pkl", "rb") as fp:
+    with open("./trained_models/ppobetween8and10/visual1/reward_mean.pkl", "rb") as fp:
         a = pickle.load(fp)
-    with open("./trained_models/ppopastbetween8and10/visual2/reward_mean.pkl", "rb") as fp:
+    with open("./trained_models/ppobetween8and10/visual2/reward_mean.pkl", "rb") as fp:
         b = pickle.load(fp)
-    with open("./trained_models/ppopastbetween8and10/visual3/reward_mean.pkl", "rb") as fp:
+    with open("./trained_models/ppobetween8and10/visual3/reward_mean.pkl", "rb") as fp:
         c = pickle.load(fp)
     visual = np.concatenate((np.asarray(a).reshape(-1,1), np.asarray(b).reshape(-1,1), np.asarray(c).reshape(-1,1)), axis=1)
     visual = np.sum(visual, axis=1)/3
@@ -427,7 +427,7 @@ elif(graph):
     plt.plot(b, color='lightgreen')
     plt.plot(c, color='lightgreen')
     plt.plot(visual, label='visual average', linewidth=5, color='green')
-    '''
+    
     d = []
     e = []
     f = []
@@ -459,15 +459,15 @@ elif(graph):
     plt.plot(h, color='moccasin')
     plt.plot(i, color='moccasin')
     plt.plot(append, label='normal channel average', linewidth=5, color='orange')'''
-    
+    '''
     j = []
     k = []
     l = []
-    with open("./trained_models/ppopastbetween8and10/append1/reward_mean.pkl", "rb") as fp:
+    with open("./trained_models/ppobetween8and10/append1/reward_mean.pkl", "rb") as fp:
         j = pickle.load(fp)
-    with open("./trained_models/ppopastbetween8and10/append2/reward_mean.pkl", "rb") as fp:
+    with open("./trained_models/ppobetween8and10/append2/reward_mean.pkl", "rb") as fp:
         k = pickle.load(fp)
-    with open("./trained_models/ppopastbetween8and10/append3/reward_mean.pkl", "rb") as fp:
+    with open("./trained_models/ppobetween8and10/append3/reward_mean.pkl", "rb") as fp:
         l = pickle.load(fp)
     append = np.concatenate((np.asarray(j).reshape(-1,1), np.asarray(k).reshape(-1,1), np.asarray(l).reshape(-1,1)), axis=1)
     append = np.sum(append, axis=1)/3
@@ -479,21 +479,21 @@ elif(graph):
     j = []
     k = []
     l = []  
-    with open("./trained_models/ppo/channel1/reward_mean.pkl", "rb") as fp:
+    with open("./trained_models/ppo/append1/reward_mean.pkl", "rb") as fp:
         j = pickle.load(fp)
-    with open("./trained_models/ppo/channel1/reward_max.pkl", "rb") as fp:
+    with open("./trained_models/ppo/visual1/reward_mean.pkl", "rb") as fp:
         k = pickle.load(fp)
-    with open("./trained_models/ppo/channel1/reward_min.pkl", "rb") as fp:
+    with open("./trained_models/ppo/visual1/reward_min.pkl", "rb") as fp:
         l = pickle.load(fp)
-    plt.plot(j)
-    plt.plot(k)
-    plt.plot(l)'''
+    plt.plot(j, label='mean')
+    plt.plot(k, label='max')
+    plt.plot(l, label='min')
     
     plt.legend()
-    plt.title('training iterations vs reward (force between 8 and 10)')
+    plt.title('training iterations vs reward (random location appending force)')
     plt.show()
 else:
     ModelCatalog.register_custom_model("Model", ConvVisual)
-    train('visual1', 200000)
+    train('visual1', 1000000)	
     #train('channel2', 200000)
     #train('channel3', 200000)

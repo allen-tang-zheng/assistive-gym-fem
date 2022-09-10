@@ -10,6 +10,34 @@ class MoveToDotEnv(AssistiveEnv):
         super(MoveToDotEnv, self).__init__(robot=robot, human=human, task='scratch_itch', obs_robot_len=[270,480,3], obs_human_len=0)
 
     def step(self, action):
+        '''agent = self.robot
+        joint = agent.right_end_effector if 'right' in agent.controllable_joints else agent.left_end_effector
+        ik_indices = agent.right_arm_ik_indices if 'right' in agent.controllable_joints else agent.left_arm_ik_indices
+        # NOTE: Adding action to current pose can cause drift over time
+        pos, orient = agent.get_pos_orient(joint)
+        # NOTE: Adding action to target pose can cause large targets far outside of the robot's work space that take a long time to come back from
+        # pos, orient = np.copy(agent.target_ee_position), np.copy(agent.target_ee_orientation)
+        # print('Reached pos:', pos, 'Reached orient:', orient)
+        # print('Reached pos:', pos, 'Reached orient:', self.get_euler(orient))
+        pos += action[:len(pos)]
+        orient += action[len(pos):]
+        # orient = self.get_quaternion(self.get_euler(orient) + action[len(pos):len(pos)+3]) # NOTE: RPY
+        # print('Target pos:', pos, 'Target orient:', orient)
+        # print('Target pos:', pos, 'Target orient:', self.get_euler(orient) + action[len(pos):len(pos)+3])
+        agent_joint_angles = agent.ik(joint, pos, orient, ik_indices, max_iterations=200, use_current_as_rest=True)
+        #self.take_step(agent_joint_angles)'''
+    
+        '''self.take_step([1,1,1,1,1,1,1])
+        #self.create_sphere(radius=0.01, pos=self.tool.get_pos_orient(1)[0], visual=True, collision=False, rgba=[1,1,0,1])
+        #self.take_step(np.append(self.sphere_pos - self.tool.get_pos_orient(1)[0] + np.array([0,0,0.5]),self.get_quaternion([0,0,-1]) - self.tool.get_pos_orient(1)[1]), ik=True, action_multiplier=1)
+        #self.take_step(np.append(np.array([-0.5,-0.3,1]) - self.tool.get_pos_orient(1)[0] + np.array([0,0,0.5]),self.get_quaternion([0,0,0]) + self.tool.get_pos_orient(1)[1] - self.tool.get_pos_orient(1)[1]), ik=True, action_multiplier=1)
+        #self.take_step(np.append(np.array([0,0,-1]), self.get_quaternion([0,0,0])), ik=True, action_multiplier=1)
+        print(self.tool.get_pos_orient(1)[0])
+        print(np.array([0,0,1]) - self.tool.get_pos_orient(1)[0])
+        #print(self.sphere_pos - self.tool.get_pos_orient(1)[0])
+        print(self.tool.get_pos_orient(1)[1])
+        print(self.get_quaternion([0,0,0]))'''
+        
         if self.human.controllable:
             action = np.concatenate([action['robot'], action['human']])
         self.take_step(action)
@@ -26,10 +54,11 @@ class MoveToDotEnv(AssistiveEnv):
             if linkA in [1]:
                 tool_force_on_sphere += force
         reward_distance = -np.linalg.norm(self.sphere_pos - tool_pos) # Penalize distances away from target
-        #reward_force = tool_force_on_sphere
-        reward_force = 0
-        if(tool_force_on_sphere > 8 and tool_force_on_sphere < 10):
-            reward_force = 1
+        reward_force = tool_force_on_sphere
+        #reward_force = 0
+        #if(tool_force_on_sphere > 8 and tool_force_on_sphere < 10):
+        #    reward_force = 1
+        print(reward_force) 
         reward = reward_distance + reward_force
 
         if self.gui:
@@ -76,9 +105,11 @@ class MoveToDotEnv(AssistiveEnv):
         self.robot.set_gripper_open_position(self.robot.left_gripper_indices, self.robot.gripper_pos[self.task], set_instantly=True)
         self.robot.enable_force_torque_sensor(self.robot.left_end_effector-1)
         
-        self.sphere_pos = [-0.5, -0.3, 0]
-        #self.sphere_pos = [np.random.rand()-0.5,np.random.rand()-0.5,0]
+        #self.sphere_pos = [-0.593, -0.128, 0.511]
+        #self.sphere_pos = [-0.51, 0.813, 0.325]
+        self.sphere_pos = [-0.5,-0.3,0]
         self.sphere = self.create_sphere(radius=0.1, pos=self.sphere_pos, visual=True, collision=True, rgba=[1,0,0,1])
+        #self.sphere = self.create_sphere(radius=0.04, pos=[-0.5,-0.3,0], visual=True, collision=False, rgba=[1,0,0,1])
 
         if not self.robot.mobile:
             self.robot.set_gravity(0, 0, 0)

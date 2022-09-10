@@ -15,16 +15,16 @@ observation = env.reset()
 imG, depth = env.get_camera_image_depth()
 frames = []
 done = False
-for i in range(1): 
+for i in range(300): 
 #while not done:
     # Step the simulation forward. Have the robot take a random action.
     observation, reward, done, info = env.step(env.action_space.sample())
     # Capture (render) an image from the camera
-    mask = (observation['mask'] == 2)
-    img, depth = env.get_camera_image_depth()
-    frames.append(img)
-    plt.imshow(mask, interpolation='nearest')
-    plt.show()
+    if i % 10 == 0:
+        img, depth = env.get_camera_image_depth()
+        frames.append(img)
+        plt.imshow(img, interpolation='nearest')
+        plt.show()
 env.disconnect()
 
 # Compile the camera frames into an animated png (apng)
